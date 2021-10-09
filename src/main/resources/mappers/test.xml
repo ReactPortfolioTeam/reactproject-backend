@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.reactproject.minishop.config.TestDbDao">
+    <select id="getTestData" resultType="com.reactproject.minishop.config.TestDbVo">
+        select
+            title,
+            name
+        from
+            DB_TEST
+    </select>
+</mapper>
