@@ -25,6 +25,9 @@ public class SignupForm {
 	private String password;
 	@NotNull(message= "{NotNull}")
 	@NotEmpty(message="{Empty}")
+	private String name;
+	@NotNull(message= "{NotNull}")
+	@NotEmpty(message="{Empty}")
 	@Length(min=6,message="{Length.pw}")
 	private String confirmPw;
 	@NotNull(message= "{NotNull}")
@@ -41,7 +44,7 @@ public class SignupForm {
 		dto.setPassword(this.password);
 		dto.setAddress(this.address);
 		dto.setEmail(this.email);
-		
+		dto.setName(this.name);
 		return dto;
 	}
 	

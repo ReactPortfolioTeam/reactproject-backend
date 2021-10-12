@@ -8,5 +8,7 @@ import com.reactproject.minishop.signup.dto.UserSignupInfoDto;
 public interface UserManageMapper {
 
 	public void insertNewUserInfo(UserSignupInfoDto userInfo);
+
+	public String findById(String userid);
 	
 }

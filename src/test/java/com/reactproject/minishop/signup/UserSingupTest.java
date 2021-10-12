@@ -13,6 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @WebMvcTest(controllers = SignupController.class)
 @Slf4j
+@Transactional
 public class UserSingupTest {
 
 	@MockBean
@@ -77,8 +79,7 @@ public class UserSingupTest {
 		
 		final ResultActions actions =  mvc.perform(post("/api/v1/signup")
 				  .contentType(MediaType.APPLICATION_JSON)
-				  .content(json)).andExpect(status().isBadRequest());
-				  
+				  .content(json)).andExpect(status().isBadRequest());			  
 	}
 	
 	@Test
