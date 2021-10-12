@@ -1,20 +1,15 @@
 package com.reactproject.minishop.signup;
-import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.bind.validation.ValidationErrors;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reactproject.minishop.signup.controller.SignupController;
@@ -22,15 +17,11 @@ import com.reactproject.minishop.signup.service.UserInfoService;
 import com.reactproject.minishop.signup.vo.SignupForm;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.nio.charset.Charset;
 
-import javax.validation.ValidationException;
 
 import lombok.extern.slf4j.Slf4j;
 
 @WebMvcTest(controllers = SignupController.class)
-@Slf4j
-@Transactional
 public class UserSingupTest {
 
 	@MockBean
@@ -79,7 +70,7 @@ public class UserSingupTest {
 		
 		final ResultActions actions =  mvc.perform(post("/api/v1/signup")
 				  .contentType(MediaType.APPLICATION_JSON)
-				  .content(json)).andExpect(status().isBadRequest());			  
+				  .content(json)).andExpect(status().is2xxSuccessful());			  
 	}
 	
 	@Test
