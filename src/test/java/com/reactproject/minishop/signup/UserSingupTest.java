@@ -86,7 +86,4 @@ public class UserSingupTest {
 				  .content(json)).andExpect(status().isBadRequest());
 				  
 	}
-	
-	
-	
 }
