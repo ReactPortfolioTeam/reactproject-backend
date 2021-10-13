@@ -46,7 +46,7 @@ public class SignupController {
 			
 			if(error.hasErrors()) {
 				
-			ResponseTypeForCommonError errorMsg = extractErrorMsgFromErrorObject(error);
+			ResponseTypeForCommonError errorMsg = service.extractErrorMsgFromErrorObject(error);
 		    return new ResponseEntity<ResponseTypeForCommonError>(errorMsg, HttpStatus.BAD_REQUEST);
 		    
 		}
@@ -72,7 +72,7 @@ public class SignupController {
 		
 		if(error.hasErrors()) {
 			
-			ResponseTypeForCommonError errorMsg = extractErrorMsgFromErrorObject(error);
+			ResponseTypeForCommonError errorMsg = service.extractErrorMsgFromErrorObject(error);
 		    return new ResponseEntity<ResponseTypeForCommonError>(errorMsg, HttpStatus.BAD_REQUEST);
 		}
 		
@@ -90,20 +90,5 @@ public class SignupController {
 		return new ResponseEntity<ResponseTypeForCommonError>(msg, HttpStatus.BAD_REQUEST);
 
 	}
-	
 
-	private ResponseTypeForCommonError extractErrorMsgFromErrorObject(BindingResult error) {
-		List<FieldError> fields = error.getFieldErrors();
-		List<ErrorMsgVo> errorLists=fields.stream().map(a->new ErrorMsgVo(a.getField(),a.getDefaultMessage())).collect(Collectors.toList());
-
-		ResponseTypeForCommonError errorMsg = new ResponseTypeForCommonError();
-		
-		
-		errorMsg.setStatusCode(400);
-		errorMsg.setMsg(errorLists);
-		errorMsg.setIssuedAt(new Date());
-		return errorMsg;
-	}
-	
-	
 }
