@@ -7,4 +7,8 @@
     	select userid,password,email,address,level from user where userid=#{userid}
     </select>
     
+    <insert id="insertRefreshToken" parameterType="com.reactproject.minishop.loginAndlogout.dto.RefreshTokenWithUseridDto">
+    	insert into auth values(#{refreshToken},#{userid})
+    </insert>
+    
 </mapper>

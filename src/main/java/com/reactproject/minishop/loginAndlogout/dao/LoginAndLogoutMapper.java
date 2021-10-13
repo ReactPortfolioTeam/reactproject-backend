@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
+import com.reactproject.minishop.loginAndlogout.dto.RefreshTokenWithUseridDto;
 import com.reactproject.minishop.loginAndlogout.vo.LoginFormVo;
 import com.reactproject.minishop.loginAndlogout.vo.LoginUserInfoVo;
 
@@ -11,4 +12,6 @@ import com.reactproject.minishop.loginAndlogout.vo.LoginUserInfoVo;
 public interface LoginAndLogoutMapper {
 
 	public Optional<LoginUserInfoVo> fetchUserInfoById(String userid);
+
+	public void insertRefreshToken(RefreshTokenWithUseridDto dto);
 }

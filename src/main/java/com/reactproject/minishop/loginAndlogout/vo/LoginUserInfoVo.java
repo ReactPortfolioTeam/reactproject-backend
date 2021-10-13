@@ -13,4 +13,6 @@ public class LoginUserInfoVo {
 	private String email;
 	private String address;
 	private String level;
+	private String Token;
+	private String refreshToken;
 }

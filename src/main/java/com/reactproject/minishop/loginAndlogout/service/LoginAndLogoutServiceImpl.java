@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import com.reactproject.minishop.loginAndlogout.dao.LoginAndLogoutMapper;
+import com.reactproject.minishop.loginAndlogout.dto.RefreshTokenWithUseridDto;
 import com.reactproject.minishop.loginAndlogout.vo.LoginFormVo;
 import com.reactproject.minishop.loginAndlogout.vo.LoginUserInfoVo;
 
@@ -18,6 +19,7 @@ import lombok.AllArgsConstructor;
 public class LoginAndLogoutServiceImpl implements LoginAndLogoutService {
 
 	private final LoginAndLogoutMapper mapper;
+	private final JwtTokenManager manager;
 	
 	@Override
 	public LoginUserInfoVo checkIfRequestedUserExist(LoginFormVo vo) throws NotFoundException,IllegalArgumentException {
@@ -33,5 +35,31 @@ public class LoginAndLogoutServiceImpl implements LoginAndLogoutService {
 		}
 		
 		return userInfo.get();
+	}
+	
+	@Override
+	public boolean insertRefreshTokenIntoDatabase(RefreshTokenWithUseridDto dto) {
+		try {
+			
+			mapper.insertRefreshToken(dto);
+			
+			return true;
+		
+		}catch(Exception e) {
+			e.fillInStackTrace();
+		}
+			return false;
+	}
+	
+	@Override
+	public String generateRefreshToken(LoginUserInfoVo vo) {
+		// TODO Auto-generated method stub
+		return manager.generateJwtRefreshStringTokenWith(vo.getUserid());
+	}
+	
+	@Override
+	public String generateToken(LoginUserInfoVo vo) {
+		// TODO Auto-generated method stub
+		return manager.generateJwtRefreshStringTokenWith(vo.getUserid());
 	}
 }

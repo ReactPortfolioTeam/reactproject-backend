@@ -5,7 +5,7 @@ import java.util.Date;
 
 import javax.naming.directory.InvalidAttributesException;
 
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -14,8 +14,20 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.reactproject.minishop.common.enumtype.UserStatus;
-import com.reactproject.minishop.common.responseType.ResponseTypeForCommonError;
 
+
+/*
+ * 작성자 : 조현일
+ * JWT 토큰 생성 관리 클래스
+ * KEY는 추후 외부로 뺄 예정
+ * 토큰 스팩 
+ * 
+ * accessToken = userid, status, expiretime
+ * refreshToken = userid, expiretime
+ * Token 디코드 시, 토큰과 현재시간을 함께 제시하여, 1이상의 숫자가 나오면 유효
+ * */
+
+@Service
 public class JwtTokenManager {
 	private String KEY  = "fsdfadfasdfsdafsadfasdfasd"; //추후 외부로 뺄 예정
 	private final Algorithm algorithmHS = Algorithm.HMAC256(KEY);
@@ -46,6 +58,28 @@ public class JwtTokenManager {
 		
 		return token;
 	}
+	
+	public String generateJwtRefreshStringTokenWith(String userid) {
+			
+			Date forNow = new Date();
+			Calendar in9Hour = Calendar.getInstance();
+			in9Hour.setTime(forNow);
+			in9Hour.add(Calendar.HOUR, 9);
+			
+			String token = "";
+			
+			try {
+				token = JWT.create()
+			        .withClaim("userid", userid)
+			        .withExpiresAt(in9Hour.getTime())
+			        .sign(algorithmHS);
+			} catch (JWTCreationException exception){
+			    //Invalid Signing configuration / Couldn't convert Claims.
+			}
+			
+			return token;
+		}
+	
 	
 	public boolean decodeJwt(String jwttoken, Date now) throws InvalidAttributesException {
 		try {
