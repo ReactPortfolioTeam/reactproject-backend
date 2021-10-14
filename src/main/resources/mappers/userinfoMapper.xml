@@ -5,7 +5,7 @@
      	insert into user values(#{userid},#{password},#{email},#{name},#{address},CURRENT_TIMESTAMP,"member")
     </insert>
     
-    <select id="findById" resultType="String">
+    <select id="findById" parameterType="string">
     	select userid from user where userid=#{userid}
     </select>
     

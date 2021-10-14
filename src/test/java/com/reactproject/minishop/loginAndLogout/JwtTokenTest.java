@@ -1,4 +1,4 @@
-package com.reactproject.minishop.login;
+package com.reactproject.minishop.loginAndLogout;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -7,6 +7,7 @@ import java.util.Date;
 
 import javax.naming.directory.InvalidAttributesException;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -54,28 +55,34 @@ public class JwtTokenTest {
 		String token = manager.generateJwtStringWith(userid, status);
 		String refrshToken = manager.generateJwtRefreshStringTokenWith(userid);
 		
-		assertThat(manager.decodeJwt(token,new Date())).isTrue(); //유효시간이 남은 경우
-		assertThat(manager.decodeJwt(refrshToken, new Date())).isTrue();
 		
 		Date forNow = new Date();
 		Calendar before30minutes = Calendar.getInstance();
 		before30minutes.setTime(forNow);
-		before30minutes.add(Calendar.MINUTE, +31); //유효시간이 지난 경우
+		before30minutes.add(Calendar.MINUTE, +50); //유효시간이 지난 경우
 		
 		forNow.setTime(before30minutes.getTimeInMillis());
+		System.out.println("현재시간 = "+before30minutes.getTimeInMillis());
 		
-		System.out.println(forNow);
-		
-		assertThat(manager.decodeJwt(token, forNow)).isFalse(); //유효시간이 지난 경우, false를 반환해야 한다.
+		//////////////////////////////////////////////////
 		
 		Calendar in9Hour = Calendar.getInstance();
 		in9Hour.setTime(forNow);
 		in9Hour.add(Calendar.HOUR, 10); //유효시간이 지난 경우
-		
 		forNow.setTime(in9Hour.getTimeInMillis());
 		
-		assertThat(manager.decodeJwt(refrshToken, forNow)).isFalse(); //유효시간이 지난 경우, false를 반환해야 한다.
-
+		Assertions.assertThrows(IllegalArgumentException.class, ()->manager.verifyToken(token));
 		
+
 	}
+	
+	@Test
+	public void jwt디코딩_유효하지_않은_토큰일경우_에러() throws InvalidAttributesException {
+		String invalidTokenWithWrongKey= "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MzQyMDU0NDcsInVzZXJpZCI6Imxkb29raGtkaCIsInN0YXR1cyI6Ik1FTUJFUiJ9.YhQWX0PWHRa7Hxr2VF2aRY1nx30Hg0r_IHgdmgqPISo";
+		Assertions.assertThrows(IllegalArgumentException.class, ()->manager.verifyToken(invalidTokenWithWrongKey));
+	
+	}
+
 }
+
+

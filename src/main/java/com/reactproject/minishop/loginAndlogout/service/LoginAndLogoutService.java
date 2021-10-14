@@ -13,5 +13,5 @@ public interface LoginAndLogoutService extends AbstractGlobalInputErrorInterface
 	public boolean insertRefreshTokenIntoDatabase(RefreshTokenWithUseridDto dto);
 	public String generateToken(LoginUserInfoVo vo);
 	public String generateRefreshToken(LoginUserInfoVo vo);
-
+	public void deleteAuthInfoByUserId(String userid);
 }

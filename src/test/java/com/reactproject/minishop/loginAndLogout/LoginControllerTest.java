@@ -1,4 +1,4 @@
-package com.reactproject.minishop.login;
+package com.reactproject.minishop.loginAndLogout;
 
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

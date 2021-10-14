@@ -3,7 +3,6 @@ package com.reactproject.minishop.loginAndlogout.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
@@ -11,13 +10,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.reactproject.minishop.common.responseType.ErrorMsgVo;
@@ -50,7 +50,7 @@ public class LoginAndOutController {
 		    return new ResponseEntity<ResponseTypeForCommonError>(errorMsg, HttpStatus.BAD_REQUEST);
 		}
 		
-		
+		try {
 		LoginUserInfoVo userinfo = service.checkIfRequestedUserExist(vo);
 		userinfo.setToken(service.generateToken(userinfo));
 		userinfo.setRefreshToken(service.generateRefreshToken(userinfo));
@@ -67,10 +67,19 @@ public class LoginAndOutController {
 		
 		
 		return new ResponseEntity<ResponseTypeForLoginSuccessVo>(res,HttpStatus.ACCEPTED);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 	
-
-	
+	@GetMapping("/logout")
+	public String logout(@RequestParam String userid){
+		service.deleteAuthInfoByUserId(userid);
+		return userid;
+		
+	}
 	//익셉션 처리 필요
 	
 	@ExceptionHandler(value = {NotFoundException.class,IllegalArgumentException.class})

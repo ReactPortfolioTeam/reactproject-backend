@@ -3,15 +3,15 @@ package com.reactproject.minishop.loginAndlogout.service;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.naming.directory.InvalidAttributesException;
-
 import org.springframework.stereotype.Service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.reactproject.minishop.common.enumtype.UserStatus;
 
@@ -29,8 +29,8 @@ import com.reactproject.minishop.common.enumtype.UserStatus;
 
 @Service
 public class JwtTokenManager {
-	private String KEY  = "fsdfadfasdfsdafsadfasdfasd"; //추후 외부로 뺄 예정
-	private final Algorithm algorithmHS = Algorithm.HMAC256(KEY);
+	private static String KEY  = "fsdfadfasdfsdafsadfasdfasd"; //추후 외부로 뺄 예정
+	private final static Algorithm algorithmHS = Algorithm.HMAC256(KEY);
 	
 	
 	public String getKey() {
@@ -81,18 +81,25 @@ public class JwtTokenManager {
 		}
 	
 	
-	public boolean decodeJwt(String jwttoken, Date now) throws InvalidAttributesException {
-		try {
-		    JWTVerifier verifier = JWT.require(algorithmHS)
-		        .build(); //Reusable verifier instance
-		    	 DecodedJWT jwt = verifier.verify(jwttoken);
+	
+	public static boolean verifyToken(String token) throws IllegalArgumentException, JWTDecodeException {
+	
+			try {
+		    DecodedJWT jwt = generateDecode(token);
+			}catch(TokenExpiredException e) {
+				throw new IllegalArgumentException("유효기간이 지난 토큰입니다");
+			}catch(JWTVerificationException e) {
+				throw new IllegalArgumentException("유효하지 않은 토큰입니다");
+			}
 		    
-		    return jwt.getExpiresAt().compareTo(now)>=1?true:false;
-		    
-		} catch (JWTVerificationException exception){
-			throw new InvalidAttributesException("유효하지 않은 토큰입니다.");
-		}
-		
+		    return true;
+	}
+	
+	private static DecodedJWT generateDecode(String jwttoken) {
+		JWTVerifier verifier = JWT.require(algorithmHS)
+		    .build(); //Reusable verifier instance
+			 DecodedJWT jwt = verifier.verify(jwttoken);
+		return jwt;
 	}
 	
 }
