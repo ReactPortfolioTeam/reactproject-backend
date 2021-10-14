@@ -14,4 +14,6 @@ public interface LoginAndLogoutMapper {
 	public Optional<LoginUserInfoVo> fetchUserInfoById(String userid);
 
 	public void insertRefreshToken(RefreshTokenWithUseridDto dto);
+
+	public void deleteRefreshTokenWithUserId(String userid);
 }

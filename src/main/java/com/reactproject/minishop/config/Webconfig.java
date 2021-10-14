@@ -1,7 +1,7 @@
 package com.reactproject.minishop.config;
 
-import javax.validation.Validator;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,9 +9,14 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.reactproject.minishop.filter.InvalidTokenCheckFilter;
+
 @Configuration
 public class Webconfig implements WebMvcConfigurer  {
 
+	
+	private InvalidTokenCheckFilter tokenFilter = new InvalidTokenCheckFilter() ;
+	
 	@Bean 
 	public MessageSource validationMessageSource() { 
 		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource(); 
@@ -24,6 +29,16 @@ public class Webconfig implements WebMvcConfigurer  {
 		bean.setValidationMessageSource(validationMessageSource()); 
 		return bean; 
 		} 
+	
+	@Bean public FilterRegistrationBean<InvalidTokenCheckFilter> firstFilter(){
+		FilterRegistrationBean<InvalidTokenCheckFilter> registrationBean = new FilterRegistrationBean<>();
+		registrationBean.setFilter(tokenFilter); 
+		registrationBean.addUrlPatterns("/api/v1/logout"); 
+		registrationBean.setOrder(1); 
+		registrationBean.setName("authFilter"); 
+		return registrationBean; 
+		}
+
 	}
 
 

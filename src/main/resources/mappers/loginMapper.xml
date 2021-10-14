@@ -8,7 +8,11 @@
     </select>
     
     <insert id="insertRefreshToken" parameterType="com.reactproject.minishop.loginAndlogout.dto.RefreshTokenWithUseridDto">
-    	insert into auth values(#{refreshToken},#{userid})
+    	insert into auth_info(user_id,expire_date,refrsh_token) values(#{userid},current_time,#{refreshToken})
     </insert>
+    
+    <delete id="deleteRefreshTokenWithUserId" parameterType="string">
+    	delete from auth_info where user_id=#{userid}
+    </delete>
     
 </mapper>

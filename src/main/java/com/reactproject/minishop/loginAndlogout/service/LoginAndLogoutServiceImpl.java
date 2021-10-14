@@ -6,6 +6,7 @@ import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
+import com.reactproject.minishop.common.enumtype.UserStatus;
 import com.reactproject.minishop.loginAndlogout.dao.LoginAndLogoutMapper;
 import com.reactproject.minishop.loginAndlogout.dto.RefreshTokenWithUseridDto;
 import com.reactproject.minishop.loginAndlogout.vo.LoginFormVo;
@@ -60,6 +61,12 @@ public class LoginAndLogoutServiceImpl implements LoginAndLogoutService {
 	@Override
 	public String generateToken(LoginUserInfoVo vo) {
 		// TODO Auto-generated method stub
-		return manager.generateJwtRefreshStringTokenWith(vo.getUserid());
+		return manager.generateJwtStringWith(vo.getUserid(),UserStatus.MEMBER);
+	}
+	
+	@Override
+	public void deleteAuthInfoByUserId(String userid) {
+		mapper.deleteRefreshTokenWithUserId(userid);
+		
 	}
 }
