@@ -5,8 +5,22 @@
      	insert into user values(#{userid},#{password},#{email},#{name},#{address},CURRENT_TIMESTAMP,"member")
     </insert>
     
-    <select id="findById" parameterType="string">
+    <select id="findById" resultType="string" parameterType="string">
     	select userid from user where userid=#{userid}
     </select>
+    
+    <update id="updateUserInfo" parameterType="com.reactproject.minishop.signup.vo.UserInfoChangeVo">
+    	update user set userid=#{userid}
+    	<if test="address!=null">
+    		,address=#{address}	
+    	</if>
+    	<if test="email!=null">
+    		,email=#{email}
+    	</if>
+    	<if test="password!=null">
+    		,password=#{password}
+    	</if>
+    	where userid=#{userid}
+    </update>
     
 </mapper>

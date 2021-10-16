@@ -1,51 +1,75 @@
 package com.reactproject.minishop.filter;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.naming.directory.InvalidAttributesException;
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.reactproject.minishop.common.responseType.ResponseTypeForCommonErrorWithOnlyAMsg;
 import com.reactproject.minishop.loginAndlogout.service.JwtTokenManager;
 
 
-public class InvalidTokenCheckFilter implements Filter {
+public class InvalidTokenCheckFilter extends OncePerRequestFilter  {
 
+	private ObjectMapper mapper= new ObjectMapper();
+	private SimpleDateFormat format;
 	
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
-
-		System.out.println("gi");
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
 		
 		final HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 		String authHeader = httpServletRequest.getHeader("Authorization");
 		System.out.println(authHeader);
 		
-		
 		try {
 			
-			if(authHeader.isEmpty()||authHeader==null) {
-				throw new NullPointerException();
+			if(authHeader==""||authHeader==null) {
+				throw new NullPointerException("로그인이 필요한 서비스입니다");
 			}
 			
 			JwtTokenManager.verifyToken(authHeader);
-			System.out.println("토큰키일치");
-			System.out.println("날짜ㅇㅋ");
-			chain.doFilter(httpServletRequest, response);
+			filterChain.doFilter(httpServletRequest, response);
 			
-		}catch(NullPointerException e) {
-			throw new IllegalArgumentException("토큰을 입력해주세요");
+		}catch(NullPointerException | IllegalArgumentException e) {
+			System.out.println(e.getMessage());
 		
-		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException(e.getMessage());
-		}  
+			
+			setErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage(),(HttpServletResponse) response);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println();
+			setErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "서버오류가 발생했습니다",(HttpServletResponse) response);
+		}  		
 	}
-
 	
+	public void setErrorResponse(HttpStatus status,String ex,HttpServletResponse response){
+        response.setStatus(status.value());
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        ResponseTypeForCommonErrorWithOnlyAMsg errorResponse = new ResponseTypeForCommonErrorWithOnlyAMsg();
+        
+   
+        errorResponse.setIssuedAt(new Date());
+        errorResponse.setStatusCode(401);
+        errorResponse.setMsg(ex);
+        
+        
+        try{
+            String json = mapper.writeValueAsString(errorResponse);
+            System.out.println("jsonResult "+json);
+            response.getWriter().write(json);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
 }
