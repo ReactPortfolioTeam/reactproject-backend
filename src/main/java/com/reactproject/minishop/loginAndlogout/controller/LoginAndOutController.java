@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.reactproject.minishop.common.responseType.ErrorMsgVo;
 import com.reactproject.minishop.common.responseType.ResponseTypeForCommonError;
+import com.reactproject.minishop.common.responseType.ResponseTypeForCommonErrorWithOnlyAMsg;
 import com.reactproject.minishop.loginAndlogout.dto.RefreshTokenWithUseridDto;
 import com.reactproject.minishop.loginAndlogout.service.LoginAndLogoutService;
 import com.reactproject.minishop.loginAndlogout.vo.LoginFormVo;
@@ -64,9 +65,15 @@ public class LoginAndOutController {
 		res.setStatusCode(200);
 		res.setUserInfo(userinfo);
 		
-		
-		
 		return new ResponseEntity<ResponseTypeForLoginSuccessVo>(res,HttpStatus.ACCEPTED);
+		}
+		catch(IllegalArgumentException | NotFoundException e) {
+			ResponseTypeForCommonErrorWithOnlyAMsg msg = new ResponseTypeForCommonErrorWithOnlyAMsg();
+			msg.setIssuedAt(new Date());
+			msg.setMsg(e.getMessage());
+			msg.setStatusCode(404);
+		    return new ResponseEntity<ResponseTypeForCommonErrorWithOnlyAMsg>(msg, HttpStatus.BAD_REQUEST);
+			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -80,7 +87,6 @@ public class LoginAndOutController {
 		return userid;
 		
 	}
-	//익셉션 처리 필요
 	
 	@ExceptionHandler(value = {NotFoundException.class,IllegalArgumentException.class})
 	public ResponseEntity<ResponseTypeForCommonError> errorHanddlerForLoginAndOutController(Exception e){

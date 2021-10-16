@@ -1,6 +1,5 @@
 package com.reactproject.minishop.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -33,7 +32,7 @@ public class Webconfig implements WebMvcConfigurer  {
 	@Bean public FilterRegistrationBean<InvalidTokenCheckFilter> firstFilter(){
 		FilterRegistrationBean<InvalidTokenCheckFilter> registrationBean = new FilterRegistrationBean<>();
 		registrationBean.setFilter(tokenFilter); 
-		registrationBean.addUrlPatterns("/api/v1/logout"); 
+		registrationBean.addUrlPatterns("/api/v1/logout","/api/v1/userinfo/*"); 
 		registrationBean.setOrder(1); 
 		registrationBean.setName("authFilter"); 
 		return registrationBean; 

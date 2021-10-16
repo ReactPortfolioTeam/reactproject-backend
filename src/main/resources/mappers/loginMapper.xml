@@ -3,12 +3,12 @@
 <mapper namespace="com.reactproject.minishop.loginAndlogout.dao.LoginAndLogoutMapper">
    
     
-    <select id="fetchUserInfoById" parameterType="String" resultType="com.reactproject.minishop.loginAndlogout.vo.LoginUserInfoVo">
+    <select id="fetchUserInfoById" parameterType="string" resultType="com.reactproject.minishop.loginAndlogout.vo.LoginUserInfoVo">
     	select userid,password,email,address,level from user where userid=#{userid}
     </select>
     
     <insert id="insertRefreshToken" parameterType="com.reactproject.minishop.loginAndlogout.dto.RefreshTokenWithUseridDto">
-    	insert into auth_info(user_id,expire_date,refrsh_token) values(#{userid},current_time,#{refreshToken})
+    	insert into auth_info(user_id,expire_date,refrsh_token) values(#{userid},current_timestamp,#{refreshToken})
     </insert>
     
     <delete id="deleteRefreshTokenWithUserId" parameterType="string">
