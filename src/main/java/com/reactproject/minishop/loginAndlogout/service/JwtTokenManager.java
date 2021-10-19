@@ -95,7 +95,7 @@ public class JwtTokenManager {
 		    return true;
 	}
 	
-	private static DecodedJWT generateDecode(String jwttoken) {
+	 static DecodedJWT generateDecode(String jwttoken) {
 		JWTVerifier verifier = JWT.require(algorithmHS)
 		    .build(); //Reusable verifier instance
 			 DecodedJWT jwt = verifier.verify(jwttoken);
