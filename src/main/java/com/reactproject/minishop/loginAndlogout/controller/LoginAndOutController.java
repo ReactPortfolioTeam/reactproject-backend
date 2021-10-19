@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.reactproject.minishop.common.responseType.ErrorMsgVo;
 import com.reactproject.minishop.common.responseType.ResponseTypeForCommonError;
 import com.reactproject.minishop.common.responseType.ResponseTypeForCommonErrorWithOnlyAMsg;
+import com.reactproject.minishop.common.responseType.ResponseTypeForCommonSuccess;
 import com.reactproject.minishop.loginAndlogout.dto.RefreshTokenWithUseridDto;
 import com.reactproject.minishop.loginAndlogout.service.LoginAndLogoutService;
 import com.reactproject.minishop.loginAndlogout.vo.LoginFormVo;
@@ -30,6 +33,7 @@ import com.reactproject.minishop.loginAndlogout.vo.LoginUserInfoVo;
 import com.reactproject.minishop.loginAndlogout.vo.ResponseTypeForLoginSuccessVo;
 
 import lombok.AllArgsConstructor;
+import lombok.experimental.Helper;
 
 @AllArgsConstructor
 @CrossOrigin("*")
@@ -82,10 +86,20 @@ public class LoginAndOutController {
 	}
 	
 	@GetMapping("/logout")
-	public String logout(@RequestParam String userid){
-		service.deleteAuthInfoByUserId(userid);
-		return userid;
+	public ResponseEntity<ResponseTypeForCommonSuccess> logout(HttpServletRequest req){
+		String token = req.getHeader("Authorization");
 		
+		System.out.println(token);
+		
+		String userId = service.getUserIdFromJwtToken(token);
+		
+		
+		service.deleteAuthInfoByUserId(userId);
+		ResponseTypeForCommonSuccess msg = new ResponseTypeForCommonSuccess();
+		msg.setIssuedAt(new Date());
+		msg.setMsg("로그아웃에 성공하였습니다");
+		msg.setStatusCode(200);
+		return new ResponseEntity<ResponseTypeForCommonSuccess>(msg,HttpStatus.ACCEPTED);
 	}
 	
 	@ExceptionHandler(value = {NotFoundException.class,IllegalArgumentException.class})

@@ -14,4 +14,5 @@ public interface LoginAndLogoutService extends AbstractGlobalInputErrorInterface
 	public String generateToken(LoginUserInfoVo vo);
 	public String generateRefreshToken(LoginUserInfoVo vo);
 	public void deleteAuthInfoByUserId(String userid);
+	public String getUserIdFromJwtToken(String token);
 }
