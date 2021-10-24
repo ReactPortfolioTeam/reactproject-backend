@@ -15,4 +15,8 @@
     	delete from auth_info where user_id=#{userid}
     </delete>
     
+    <select id="fetchRefreshToken" parameterType="com.reactproject.minishop.loginAndlogout.vo.RefreshToken" resultType="com.reactproject.minishop.loginAndlogout.vo.RefreshToken">
+    	select * from auth_info where user_id=#{userId};
+    </select>
+    
 </mapper>
