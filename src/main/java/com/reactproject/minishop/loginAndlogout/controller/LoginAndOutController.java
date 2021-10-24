@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
@@ -19,21 +21,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.reactproject.minishop.common.responseType.ErrorMsgVo;
 import com.reactproject.minishop.common.responseType.ResponseTypeForCommonError;
 import com.reactproject.minishop.common.responseType.ResponseTypeForCommonErrorWithOnlyAMsg;
 import com.reactproject.minishop.common.responseType.ResponseTypeForCommonSuccess;
+import com.reactproject.minishop.common.responseType.ResponseTypeForCommonSuccessWithRefreshToken;
 import com.reactproject.minishop.loginAndlogout.dto.RefreshTokenWithUseridDto;
 import com.reactproject.minishop.loginAndlogout.service.LoginAndLogoutService;
 import com.reactproject.minishop.loginAndlogout.vo.LoginFormVo;
 import com.reactproject.minishop.loginAndlogout.vo.LoginUserInfoVo;
+import com.reactproject.minishop.loginAndlogout.vo.RefreshToken;
 import com.reactproject.minishop.loginAndlogout.vo.ResponseTypeForLoginSuccessVo;
 
 import lombok.AllArgsConstructor;
-import lombok.experimental.Helper;
 
 @AllArgsConstructor
 @CrossOrigin("*")
@@ -43,9 +45,36 @@ public class LoginAndOutController {
 
 	private final LoginAndLogoutService service;
 	
+	
+	@GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, value = "/refresh")
+	public ResponseEntity<?> refreshToken(@RequestBody RefreshToken token){
+		System.out.println(token.getRefreshToken());
+		String newAccesstoken = service.checkIfRefreshTokenIsValid(token);
+		
+		if(newAccesstoken!=null) {
+			
+			ResponseTypeForCommonSuccessWithRefreshToken msg = new ResponseTypeForCommonSuccessWithRefreshToken();
+			msg.setIssuedAt(new Date());
+			msg.setMsg("토큰이 재발급되었습니다");
+			msg.setStatusCode(200);
+			msg.setToken(newAccesstoken);
+			
+			return new ResponseEntity<ResponseTypeForCommonSuccessWithRefreshToken>(msg,HttpStatus.ACCEPTED);
+
+		}
+	
+		ResponseTypeForCommonErrorWithOnlyAMsg msg = new ResponseTypeForCommonErrorWithOnlyAMsg();
+		msg.setIssuedAt(new Date());
+		msg.setMsg("유효하지 않은 토큰입니다");
+		msg.setStatusCode(400);
+		
+		return new ResponseEntity<ResponseTypeForCommonErrorWithOnlyAMsg>(msg,HttpStatus.ACCEPTED);
+	}
+	
+	
 	@Transactional
 	@PostMapping(path="/login",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> loginHandler(@Validated @RequestBody LoginFormVo vo, BindingResult error) throws IllegalArgumentException, NotFoundException {
+	public ResponseEntity<?> loginHandler(HttpServletResponse response ,@Validated @RequestBody LoginFormVo vo, BindingResult error) throws IllegalArgumentException, NotFoundException {
 		
 
 		
@@ -61,7 +90,9 @@ public class LoginAndOutController {
 		userinfo.setRefreshToken(service.generateRefreshToken(userinfo));
 		
 		service.insertRefreshTokenIntoDatabase(new RefreshTokenWithUseridDto(userinfo.getRefreshToken(), userinfo.getUserid()));
+		Cookie cookie = service.createCookieWithRefreshToken(userinfo.getRefreshToken());
 		
+		response.addCookie(cookie);
 		
 		ResponseTypeForLoginSuccessVo res = new ResponseTypeForLoginSuccessVo();
 		res.setIssuedAt(new Date());

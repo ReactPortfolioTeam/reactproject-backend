@@ -2,16 +2,20 @@ package com.reactproject.minishop.loginAndlogout.service;
 
 import java.util.Optional;
 
+import javax.servlet.http.Cookie;
+
 import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import com.auth0.jwt.interfaces.Claim;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reactproject.minishop.common.enumtype.UserStatus;
 import com.reactproject.minishop.loginAndlogout.dao.LoginAndLogoutMapper;
 import com.reactproject.minishop.loginAndlogout.dto.RefreshTokenWithUseridDto;
 import com.reactproject.minishop.loginAndlogout.vo.LoginFormVo;
 import com.reactproject.minishop.loginAndlogout.vo.LoginUserInfoVo;
+import com.reactproject.minishop.loginAndlogout.vo.RefreshToken;
 
 import lombok.AllArgsConstructor;
 
@@ -20,6 +24,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class LoginAndLogoutServiceImpl implements LoginAndLogoutService {
 
+	private final ObjectMapper converter;
 	private final LoginAndLogoutMapper mapper;
 	private final JwtTokenManager manager;
 	
@@ -76,4 +81,32 @@ public class LoginAndLogoutServiceImpl implements LoginAndLogoutService {
 		Claim userid = JwtTokenManager.generateDecode(token).getClaim("userid");
 		return userid.asString();
 	}
+	
+	@Override
+	public String checkIfRefreshTokenIsValid(RefreshToken token) throws IllegalArgumentException {
+		RefreshToken tokenInfo=  mapper.fetchRefreshToken(token.getUserId());
+		if(tokenInfo != null) {
+			
+	
+			
+			System.out.println(token.toString());
+			LoginUserInfoVo vo = mapper.fetchUserInfoById(tokenInfo.getUserId()).get();
+			String newToken = manager.generateJwtStringWith(tokenInfo.getUserId(), UserStatus.valueOf(vo.getLevel().toUpperCase()));
+			
+			return newToken;
+		}
+		
+		return null;
+	}
+	 
+	@Override
+	public Cookie createCookieWithRefreshToken(String refreshToken) {
+		Cookie refreshCookie = new Cookie("refreshToken",refreshToken);
+		refreshCookie.setPath("/");
+		refreshCookie.setHttpOnly(true);
+		refreshCookie.setMaxAge(60*24);
+		return refreshCookie;
+		
+	}
+
 }
