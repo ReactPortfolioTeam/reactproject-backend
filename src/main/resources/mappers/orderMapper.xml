@@ -4,7 +4,7 @@
    
     <insert id="insertOrderInformation" parameterType="com.reactproject.minishop.order.dto.OrderInformationDto" useGeneratedKeys="true" keyProperty="orderId">
     	insert into order_info(
-	userid, phone_number, shipment_address, order_date, whole_price
+	userid, phone_number, shipment_address, order_date, order_price
 ) values(#{userId},#{phoneNumber},#{shipmentAddress},now(),#{orderPrice})
     	
     </insert>
