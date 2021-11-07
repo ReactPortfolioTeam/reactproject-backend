@@ -21,7 +21,7 @@ public class JwtTokenTest {
 	private final JwtTokenManager manager = new JwtTokenManager();
 	private final ObjectMapper mapper = new ObjectMapper();
 	
-	@Test
+	//@Test
 	public void JWT_키를_잘_불러오는지_확인() {
 		String key = manager.getKey();
 		assertThat(key).isNotNull();
@@ -29,7 +29,7 @@ public class JwtTokenTest {
 
 	}
 	
-	@Test
+	//@Test
 	public void jwt_엑세스토큰_생성테스트() throws JsonMappingException, JsonProcessingException {
 		String token = manager.generateJwtStringWith("lookhkh", UserStatus.MEMBER);
 		
@@ -40,13 +40,13 @@ public class JwtTokenTest {
 		
 	}
 	
-	@Test
+	//@Test
 	public void jwt_refrsh_token_생성테스트() {
 		String refreshToken = manager.generateJwtRefreshStringTokenWith("lookhkh");
 		assertThat(refreshToken).isNotNull();
 	}
 	
-	@Test
+	//@Test
 	public void jwt디코딩_유효시간이내의_토큰의_유효성_확인() throws InvalidAttributesException {
 		
 		String userid = "lookhkh";
@@ -76,7 +76,7 @@ public class JwtTokenTest {
 
 	}
 	
-	@Test
+	//@Test
 	public void jwt디코딩_유효하지_않은_토큰일경우_에러() throws InvalidAttributesException {
 		String invalidTokenWithWrongKey= "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MzQyMDU0NDcsInVzZXJpZCI6Imxkb29raGtkaCIsInN0YXR1cyI6Ik1FTUJFUiJ9.YhQWX0PWHRa7Hxr2VF2aRY1nx30Hg0r_IHgdmgqPISo";
 		Assertions.assertThrows(IllegalArgumentException.class, ()->manager.verifyToken(invalidTokenWithWrongKey));

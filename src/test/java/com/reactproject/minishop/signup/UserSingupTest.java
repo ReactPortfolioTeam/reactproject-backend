@@ -46,7 +46,7 @@ public class UserSingupTest {
 
 	 }
 	
-	@Test
+	//@Test
 	@DisplayName("정상적인 상황")
 	public void 회원가입() throws Exception {
 		
@@ -60,7 +60,7 @@ public class UserSingupTest {
 		
 	}
 	
-	@Test
+	//@Test
 	@DisplayName("인수 오류 상황 (아이디에 한글 포함)")
 	public void 회원가입인수오류() throws Exception {
 		this.mockForm.setUserid("이것은실패해야합니다");
