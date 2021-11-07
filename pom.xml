@@ -48,6 +48,12 @@
     <artifactId>java-jwt</artifactId>
     <version>3.18.2</version>
 </dependency>
+<!-- https://mvnrepository.com/artifact/com.antkorwin/ioutils -->
+<dependency>
+    <groupId>com.antkorwin</groupId>
+    <artifactId>ioutils</artifactId>
+    <version>0.8</version>
+</dependency>
 
 	<dependency>
   <groupId>org.junit.jupiter</groupId>
