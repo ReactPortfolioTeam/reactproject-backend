@@ -51,7 +51,7 @@ public class LoginControllerTest {
 	@Autowired
 	MockMvc mvc;
 	
-	@Test
+	//@Test
 	@DisplayName(" 1. 입력받은 아이디가 DB에 존재하며, 비밀번호도 동일한 경우 유저정보와 토큰을 리턴")
 	public void test() throws Exception {
 		loginVo.setUserid("lookhkh12345");

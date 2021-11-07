@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.reactproject.minishop.order.dao.OrderMapper">
+   
+    <insert id="insertOrderInformation" parameterType="com.reactproject.minishop.order.dto.OrderInformationDto" useGeneratedKeys="true" keyProperty="orderId">
+    	insert into order_info(
+	userid, phone_number, shipment_address, order_date, whole_price
+) values(#{userId},#{phoneNumber},#{shipmentAddress},now(),#{orderPrice})
+    	
+    </insert>
+    
+    <insert id="insertOrderedProductList" parameterType="com.reactproject.minishop.order.dto.ItemInformationDto">
+    	insert into order_product values(	
+        #{productId}
+        ,#{orderId}
+        ,#{quantity}
+    )
+    </insert>
+    
+    <select id="getOrderInfoByUserIdAndOrderId" parameterType="string" resultType="com.reactproject.minishop.order.dto.OrderInformationDto">
+    	select * from order_info where userid=#{userid} and order_id=#{orderid} and order_state='pending'
+    </select>
+    
+    <select id="getOrderedItemsByUserIdAndOrderId" parameterType="string" resultType="com.reactproject.minishop.order.dto.ItemInformationDto">
+    	select * from order_product where order_id=#{orderid}
+    </select>
+</mapper>
