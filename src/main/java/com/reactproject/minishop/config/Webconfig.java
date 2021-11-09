@@ -32,7 +32,7 @@ public class Webconfig implements WebMvcConfigurer  {
 	@Bean public FilterRegistrationBean<InvalidTokenCheckFilter> firstFilter(){
 		FilterRegistrationBean<InvalidTokenCheckFilter> registrationBean = new FilterRegistrationBean<>();
 		registrationBean.setFilter(tokenFilter); 
-		registrationBean.addUrlPatterns("/api/v1/logout","/api/v1/userinfo/*"); 
+		registrationBean.addUrlPatterns("/api/v1/logout","/api/v1/userinfo/*","/api/v1/order/*"); 
 		registrationBean.setOrder(1); 
 		registrationBean.setName("authFilter"); 
 		return registrationBean; 
