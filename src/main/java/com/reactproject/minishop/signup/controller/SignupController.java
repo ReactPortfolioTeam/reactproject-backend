@@ -3,6 +3,7 @@ package com.reactproject.minishop.signup.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
@@ -17,8 +18,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.reactproject.minishop.common.responseType.ErrorMsgVo;
 import com.reactproject.minishop.common.responseType.ResponseTypeForCommon;
 import com.reactproject.minishop.common.responseType.ResponseTypeForCommonError;
@@ -41,6 +44,10 @@ public class SignupController {
 	@PostMapping(consumes =MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<? extends ResponseTypeForCommon> signup(@Validated @RequestBody SignupForm form, BindingResult error){
 			
+			if(service.checkIfUseidIsDuplicate(form.getUserid())!=null) {
+				error.rejectValue("userid", null,"이미 존재하는 아이디입니다");
+			};
+		
 			if(!form.getPassword().equals(form.getConfirmPw())) {
 				error.rejectValue("password", null,"비밀번호를 확인해주세요");
 			}
@@ -64,12 +71,14 @@ public class SignupController {
 		return new ResponseEntity<ResponseTypeForCommonSuccess>(msg, HttpStatus.CREATED);
 	}
 	
-	@GetMapping(path="/check",produces = MediaType.APPLICATION_JSON_VALUE, consumes =MediaType.APPLICATION_JSON_VALUE )
-	public ResponseEntity<? extends ResponseTypeForCommon> idDuplicationCheck(@Validated @RequestBody IdDuplicateValidationVo vo,BindingResult error){
+	@GetMapping(path="/check",produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<? extends ResponseTypeForCommon> idDuplicationCheck(@Validated IdDuplicateValidationVo userid, BindingResult error ){
 		
+
 		ResponseTypeForCommonError msg = new ResponseTypeForCommonError();
 		msg.setIssuedAt(new Date());
 		List<ErrorMsgVo> msgs = new ArrayList<>();
+
 		
 		if(error.hasErrors()) {
 			
@@ -77,7 +86,7 @@ public class SignupController {
 		    return new ResponseEntity<ResponseTypeForCommonError>(errorMsg, HttpStatus.BAD_REQUEST);
 		}
 		
-		if(service.checkIfUseidIsDuplicate(vo.getUserid())==null) {
+		if(service.checkIfUseidIsDuplicate(userid.getUserid())==null) {
 			ResponseTypeForCommonSuccess success = new ResponseTypeForCommonSuccess();
 			success.setIssuedAt(new Date());
 			success.setMsg("사용가능한 아이디입니다");
